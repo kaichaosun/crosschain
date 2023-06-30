@@ -127,6 +127,8 @@ func GetSecret(uri string) (string, error) {
 		data, _ := secret.Data["data"].(map[string]interface{})
 		result, _ := data[vaultKey].(string)
 		return strings.TrimSpace(result), nil
+	case "plain":
+		return path, nil
 	}
 	return "", errors.New("invalid secret source for: ***")
 }
