@@ -15,7 +15,6 @@ import (
 	. "github.com/jumpcrypto/crosschain"
 	"github.com/jumpcrypto/crosschain/chain/aptos"
 	"github.com/jumpcrypto/crosschain/chain/bitcoin"
-	"github.com/jumpcrypto/crosschain/chain/cosmos"
 	"github.com/jumpcrypto/crosschain/chain/evm"
 	"github.com/jumpcrypto/crosschain/chain/solana"
 	"github.com/jumpcrypto/crosschain/config"
@@ -515,8 +514,8 @@ func newClient(cfg ITask) (Client, error) {
 		return evm.NewClient(cfg)
 	case DriverEVMLegacy:
 		return evm.NewLegacyClient(cfg)
-	case DriverCosmos, DriverCosmosEvmos:
-		return cosmos.NewClient(cfg)
+	// case DriverCosmos, DriverCosmosEvmos:
+	// 	return cosmos.NewClient(cfg)
 	case DriverSolana:
 		return solana.NewClient(cfg)
 	case DriverAptos:
@@ -533,8 +532,8 @@ func newTxBuilder(cfg ITask) (TxBuilder, error) {
 		return evm.NewTxBuilder(cfg)
 	case DriverEVMLegacy:
 		return evm.NewLegacyTxBuilder(cfg)
-	case DriverCosmos, DriverCosmosEvmos:
-		return cosmos.NewTxBuilder(cfg)
+	// case DriverCosmos, DriverCosmosEvmos:
+	// 	return cosmos.NewTxBuilder(cfg)
 	case DriverSolana:
 		return solana.NewTxBuilder(cfg)
 	case DriverAptos:
@@ -549,8 +548,8 @@ func newSigner(cfg ITask) (Signer, error) {
 	switch Driver(cfg.GetDriver()) {
 	case DriverEVM, DriverEVMLegacy:
 		return evm.NewSigner(cfg)
-	case DriverCosmos, DriverCosmosEvmos:
-		return cosmos.NewSigner(cfg)
+	// case DriverCosmos, DriverCosmosEvmos:
+	// 	return cosmos.NewSigner(cfg)
 	case DriverSolana:
 		return solana.NewSigner(cfg)
 	case DriverAptos:
@@ -565,8 +564,8 @@ func newAddressBuilder(cfg ITask) (AddressBuilder, error) {
 	switch Driver(cfg.GetDriver()) {
 	case DriverEVM, DriverEVMLegacy:
 		return evm.NewAddressBuilder(cfg)
-	case DriverCosmos, DriverCosmosEvmos:
-		return cosmos.NewAddressBuilder(cfg)
+	// case DriverCosmos, DriverCosmosEvmos:
+	// 	return cosmos.NewAddressBuilder(cfg)
 	case DriverSolana:
 		return solana.NewAddressBuilder(cfg)
 	case DriverAptos:
@@ -593,10 +592,10 @@ func UnmarshalTxInput(data []byte) (TxInput, error) {
 		var txInput aptos.TxInput
 		err := json.Unmarshal(buf, &txInput)
 		return &txInput, err
-	case DriverCosmos, DriverCosmosEvmos:
-		var txInput cosmos.TxInput
-		err := json.Unmarshal(buf, &txInput)
-		return &txInput, err
+	// case DriverCosmos, DriverCosmosEvmos:
+	// 	var txInput cosmos.TxInput
+	// 	err := json.Unmarshal(buf, &txInput)
+	// 	return &txInput, err
 	case DriverEVM, DriverEVMLegacy:
 		var txInput evm.TxInput
 		err := json.Unmarshal(buf, &txInput)
@@ -694,8 +693,8 @@ func CheckError(driver Driver, err error) ClientError {
 	switch driver {
 	case DriverEVM, DriverEVMLegacy:
 		return evm.CheckError(err)
-	case DriverCosmos, DriverCosmosEvmos:
-		return cosmos.CheckError(err)
+	// case DriverCosmos, DriverCosmosEvmos:
+	// 	return cosmos.CheckError(err)
 	case DriverSolana:
 		return solana.CheckError(err)
 	case DriverAptos:

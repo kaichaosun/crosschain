@@ -7,7 +7,6 @@ import (
 	xc "github.com/jumpcrypto/crosschain"
 	"github.com/jumpcrypto/crosschain/chain/aptos"
 	"github.com/jumpcrypto/crosschain/chain/bitcoin"
-	"github.com/jumpcrypto/crosschain/chain/cosmos"
 	"github.com/jumpcrypto/crosschain/chain/evm"
 	"github.com/jumpcrypto/crosschain/chain/solana"
 	"github.com/shopspring/decimal"
@@ -436,24 +435,6 @@ func (s *CrosschainTestSuite) TestTxInputSerDeser() {
 	require.NotNil(typedSolana)
 	require.Equal(inputSolana, typedSolana)
 
-	// Cosmos
-	inputCosmos := cosmos.NewTxInput()
-	inputCosmos.FromPublicKey = []byte{1, 2, 3}
-	inputCosmos.AccountNumber = 1
-	inputCosmos.Sequence = 2
-	inputCosmos.GasLimit = 3
-	inputCosmos.GasPrice = 4.5
-	inputCosmos.Memo = "memo"
-	ser, err = s.Factory.MarshalTxInput(inputCosmos)
-	require.NoError(err)
-
-	deser, err = s.Factory.UnmarshalTxInput(ser)
-	require.NoError(err)
-	typedCosmos := deser.(*cosmos.TxInput)
-	require.NotNil(typedCosmos)
-	expected := inputCosmos
-	require.Equal(expected, typedCosmos)
-
 	inputBtc := bitcoin.NewTxInput()
 	inputBtc.UnspentOutputs = []bitcoin.Output{
 		{
@@ -491,8 +472,8 @@ func (s *CrosschainTestSuite) TestAllTxInputSerDeser() {
 		switch driver {
 		case xc.DriverEVM, xc.DriverEVMLegacy:
 			input = evm.NewTxInput()
-		case xc.DriverCosmos, xc.DriverCosmosEvmos:
-			input = cosmos.NewTxInput()
+		// case xc.DriverCosmos, xc.DriverCosmosEvmos:
+		// 	input = cosmos.NewTxInput()
 		case xc.DriverSolana:
 			input = solana.NewTxInput()
 		case xc.DriverAptos:
