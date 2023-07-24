@@ -56,6 +56,7 @@ type TxInput struct {
 	// DynamicFeeTx
 	GasTipCap xc.AmountBlockchain // maxPriorityFeePerGas
 	GasFeeCap xc.AmountBlockchain // maxFeePerGas
+	BaseFee   xc.AmountBlockchain // base fee from last block
 	// LegacyTx
 	GasPrice xc.AmountBlockchain // wei per gas
 }
@@ -207,6 +208,13 @@ func (client *Client) FetchTxInput(ctx context.Context, from xc.Address, _ xc.Ad
 	result.GasPrice = gas  // legacy
 	result.GasFeeCap = gas // new
 
+	// BaseFee
+	baseFee, err := client.LastBaseFee(ctx)
+	if err != nil {
+		return nil, err
+	}
+	result.BaseFee = baseFee
+
 	return result, err
 }
 
@@ -328,6 +336,29 @@ func (client *Client) FetchTxInfo(ctx context.Context, txHashStr xc.TxHash) (xc.
 	result.Destinations = info.Destinations
 
 	return result, nil
+}
+
+// Fetch the base fee of last block
+func (client *Client) LastBaseFee(ctx context.Context) (xc.AmountBlockchain, error) {
+	// legacy gas estimation via SuggestGasPrice
+	var baseFee uint64
+	if client.Legacy {
+		baseFeeInt, err := client.EthClient.SuggestGasPrice(ctx)
+		if err != nil {
+			return xc.NewAmountBlockchainFromUint64(0), err
+		} else {
+			baseFee = baseFeeInt.Uint64()
+		}
+	} else {
+		latest, err := client.EthClient.HeaderByNumber(ctx, nil)
+		if err != nil {
+			return xc.NewAmountBlockchainFromUint64(0), err
+		} else {
+			baseFee = latest.BaseFee.Uint64()
+		}
+	}
+
+	return xc.NewAmountBlockchainFromUint64(baseFee), nil
 }
 
 // EstimateGas estimates gas price for a Cosmos chain
